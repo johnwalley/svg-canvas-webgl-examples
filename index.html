@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Visualising large data sets - SVG, Canvas and WebGL</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
+    crossorigin="anonymous">
+  <style>
+    svg,
+    canvas {
+      border: 1px solid black;
+    }
+
+    canvas {
+      width: 400px;
+      height: 400px;
+    }
+
+    #num-elements {
+      width: 100px;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: 420px 420px 420px;
+    }
+
+    .svg {}
+
+    .canvas {}
+
+    .webgl {}
+  </style>
+  <script>
+    let numElements = 100;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelector('select[name="num-elements"]').onchange = event => { numElements = event.target.value };
+    }, false);
+  </script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="./gl-matrix-min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Visualising large data sets - SVG, Canvas and WebGL</h1>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col">Method</th>
+          <th scope="col">Time to render one frame</th>
+          <th scope="col">Frames per second</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">SVG</th>
+          <td id="svg-initial-time"></td>
+          <td id="svg-update-time"></td>
+        </tr>
+        <tr>
+          <th scope="row">Canvas</th>
+          <td id="canvas-initial-time"></td>
+          <td id="canvas-update-time"></td>
+        </tr>
+        <tr>
+          <th scope="row">WebGL</th>
+          <td id="webgl-initial-time"></td>
+          <td id="webgl-update-time"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="form-group" id="num-elements">
+      <label for="exampleFormControlSelect1">Number of elements</label>
+      <select class="form-control" id="exampleFormControlSelect1" name="num-elements">
+        <option>100</option>
+        <option>1000</option>
+        <option>10000</option>
+      </select>
+    </div>
+    <div class="wrapper">
+      <div class="svg">
+        <h2>SVG</h2>
+        <div class="d-flex flex-column">
+          <div class="p-2">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-primary" onClick="renderSVG()">Static</button>
+              <button type="button" class="btn btn-outline-primary" onClick="animateSVG()">Start</button>
+              <button type="button" class="btn btn-outline-primary" onClick="stopSVG()">Stop</button>
+              <button type="button" class="btn btn-outline-primary" onClick="clearSVG()">Clear</button>
+
+            </div>
+            <p id="svg-load-time"></p>
+          </div>
+          <div class="p-2">
+            <svg id="svg" width="400" height="400"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="canvas">
+        <h2>Canvas</h2>
+        <div class="d-flex flex-column">
+          <div class="p-2">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-primary" onClick="renderCanvas()">Static</button>
+              <button type="button" class="btn btn-outline-primary" onClick="animateCanvas()">Start</button>
+              <button type="button" class="btn btn-outline-primary" onClick="stopCanvas()">Stop</button>
+            </div>
+            <p id="canvas-load-time"></p>
+          </div>
+          <div class="p-2">
+            <canvas id="canvas" width="800" height="800">
+            </canvas>
+          </div>
+        </div>
+      </div>
+      <div class="webgl">
+        <h2>WebGL</h2>
+        <div class="d-flex flex-column">
+          <div class="p-2">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-primary" onClick="renderWebGL()">Static</button>
+              <button type="button" class="btn btn-outline-primary" onClick="animateWebGL()">Start</button>
+              <button type="button" class="btn btn-outline-primary" onClick="stopWebGL()">Stop</button>
+            </div>
+            <p id="webgl-load-time"></p>
+          </div>
+          <div class="p-2">
+            <canvas id="webgl" width="800" height="800">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./svg.js"></script>
+    <script src="./canvas.js"></script>
+    <script src="./webgl.js"></script>
+</body>
+
+</html>
