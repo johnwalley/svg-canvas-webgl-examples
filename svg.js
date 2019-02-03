@@ -1,5 +1,3 @@
-let myReq;
-
 function renderSVG() {
   d3.csv(
     './output.csv',
@@ -12,8 +10,8 @@ function renderSVG() {
     d => {
       d = d.slice(0, numElements);
 
-      const x = d3.scaleLinear().range([0, 400]);
-      const y = d3.scaleLinear().range([400, 0]);
+      const x = d3.scaleLinear().range([0, width]);
+      const y = d3.scaleLinear().range([width, 0]);
 
       x.domain(d3.extent(d, d => d.lon));
       y.domain(d3.extent(d, d => d.lat));
@@ -36,10 +34,10 @@ function renderSVG() {
       performance.mark('svg-render-end');
       performance.measure('svg-render', 'svg-render-start', 'svg-render-end');
       const measures = performance.getEntriesByName('svg-render');
-      console.log(measures[0].duration);
 
       const duration = `${d3.format('.0f')(measures[0].duration)} ms`;
 
+      d3.select('#svg-load-time').text(duration);
       d3.select('#svg-initial-time').text(duration);
 
       performance.clearMarks();
@@ -47,6 +45,8 @@ function renderSVG() {
     }
   );
 }
+
+let myReq;
 
 function animateSVG() {
   d3.csv(
@@ -65,8 +65,8 @@ function animateSVG() {
         () => 2 * Math.PI * Math.random()
       );
 
-      const x = d3.scaleLinear().range([0, 400]);
-      const y = d3.scaleLinear().range([400, 0]);
+      const x = d3.scaleLinear().range([0, width]);
+      const y = d3.scaleLinear().range([width, 0]);
 
       x.domain(d3.extent(d, d => d.lon));
       y.domain(d3.extent(d, d => d.lat));
@@ -80,11 +80,13 @@ function animateSVG() {
           .selectAll('circle')
           .attr(
             'cx',
-            (d, i) => x(d.lon) + 20 * Math.sin(0.001 * timestamp + phase[i])
+            (d, i) =>
+              x(d.lon) + width / 20 * Math.sin(0.001 * timestamp + phase[i])
           )
           .attr(
             'cy',
-            (d, i) => y(d.lat) + 20 * Math.cos(0.001 * timestamp + phase[i])
+            (d, i) =>
+              y(d.lat) + width / 20 * Math.cos(0.001 * timestamp + phase[i])
           );
 
         if (lastTimestamp !== undefined) {
@@ -93,7 +95,6 @@ function animateSVG() {
           )} /s`;
 
           d3.select('#svg-update-time').text(fps);
-          console.log(fps);
         }
 
         lastTimestamp = timestamp;

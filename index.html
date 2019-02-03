@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Visualising large data sets - SVG, Canvas and WebGL</title>
+  <title>Visualising 'large' data sets - SVG, Canvas and WebGL</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
     crossorigin="anonymous">
   <style>
@@ -15,27 +15,32 @@
     }
 
     canvas {
-      width: 400px;
-      height: 400px;
+      width: 200px;
+      height: 200px;
     }
 
     #num-elements {
+      display: flex;
+      align-items: center;
+    }
+
+    #num-elements label {
+      flex-grow: 0;
+      padding-right: 10px;
+    }
+
+    #num-elements select {
       width: 100px;
     }
 
     .wrapper {
       display: grid;
-      grid-template-columns: 420px 420px 420px;
+      grid-template-columns: 1fr 1fr 1fr;
     }
-
-    .svg {}
-
-    .canvas {}
-
-    .webgl {}
   </style>
   <script>
-    let numElements = 100;
+    let numElements = 10000;
+    let width = 200;
 
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelector('select[name="num-elements"]').onchange = event => { numElements = event.target.value };
@@ -47,7 +52,7 @@
 
 <body>
   <div class="container">
-    <h1>Visualising large data sets - SVG, Canvas and WebGL</h1>
+    <h1>Visualising 'large' data sets - SVG, Canvas and WebGL</h1>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -77,9 +82,8 @@
     <div class="form-group" id="num-elements">
       <label for="exampleFormControlSelect1">Number of elements</label>
       <select class="form-control" id="exampleFormControlSelect1" name="num-elements">
-        <option>100</option>
-        <option>1000</option>
         <option>10000</option>
+        <option>1000</option>
       </select>
     </div>
     <div class="wrapper">
@@ -92,12 +96,11 @@
               <button type="button" class="btn btn-outline-primary" onClick="animateSVG()">Start</button>
               <button type="button" class="btn btn-outline-primary" onClick="stopSVG()">Stop</button>
               <button type="button" class="btn btn-outline-primary" onClick="clearSVG()">Clear</button>
-
             </div>
-            <p id="svg-load-time"></p>
+            <p id="svg-load-time-disabled"></p>
           </div>
           <div class="p-2">
-            <svg id="svg" width="400" height="400"></svg>
+            <svg id="svg" width="200" height="200"></svg>
           </div>
         </div>
       </div>
@@ -109,11 +112,12 @@
               <button type="button" class="btn btn-outline-primary" onClick="renderCanvas()">Static</button>
               <button type="button" class="btn btn-outline-primary" onClick="animateCanvas()">Start</button>
               <button type="button" class="btn btn-outline-primary" onClick="stopCanvas()">Stop</button>
+              <button type="button" class="btn btn-outline-primary" onClick="clearCanvas()">Clear</button>
             </div>
-            <p id="canvas-load-time"></p>
+            <p id="canvas-load-time-disabled"></p>
           </div>
           <div class="p-2">
-            <canvas id="canvas" width="800" height="800">
+            <canvas id="canvas" width="400" height="400">
             </canvas>
           </div>
         </div>
@@ -126,11 +130,12 @@
               <button type="button" class="btn btn-outline-primary" onClick="renderWebGL()">Static</button>
               <button type="button" class="btn btn-outline-primary" onClick="animateWebGL()">Start</button>
               <button type="button" class="btn btn-outline-primary" onClick="stopWebGL()">Stop</button>
+              <button type="button" class="btn btn-outline-primary" onClick="clearWebGL()">Clear</button>
             </div>
-            <p id="webgl-load-time"></p>
+            <p id="webgl-load-time-disabled"></p>
           </div>
           <div class="p-2">
-            <canvas id="webgl" width="800" height="800">
+            <canvas id="webgl" width="400" height="400">
             </canvas>
           </div>
         </div>

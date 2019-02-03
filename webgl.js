@@ -70,7 +70,6 @@ function renderWebGL() {
         'webgl-render-end'
       );
       const measures = performance.getEntriesByName('webgl-render');
-      console.log(measures[0].duration);
 
       const duration = `${d3.format('.0f')(measures[0].duration)} ms`;
 
@@ -123,7 +122,7 @@ function renderWebGL() {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    const width = 0.005;
+    const width = 0.02;
     const positions = [
       width,
       width,
@@ -143,7 +142,7 @@ function renderWebGL() {
   }
 
   function drawScene(gl, programInfo, buffers, data) {
-    gl.clearColor(1.0, 1.0, 1.0, 1.0); // Clear to black, fully opaque
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
     gl.clearDepth(1.0); // Clear everything
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -271,9 +270,14 @@ function animateWebGL() {
       // objects we'll be drawing.
       const buffers = initBuffers(gl);
 
+      const phase = Array.from(
+        { length: d.length },
+        () => 2 * Math.PI * Math.random()
+      );
+
       // Draw the scene
       webGLRequest = window.requestAnimationFrame(function(timestamp) {
-        drawScene(gl, programInfo, buffers, d, timestamp);
+        drawScene(gl, programInfo, buffers, d, phase, timestamp);
       });
     }
   );
@@ -319,7 +323,7 @@ function animateWebGL() {
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-    const width = 0.005;
+    const width = 0.02;
     const positions = [
       width,
       width,
@@ -340,8 +344,8 @@ function animateWebGL() {
 
   let lastTimestamp;
 
-  function drawScene(gl, programInfo, buffers, data, timestamp) {
-    gl.clearColor(1.0, 1.0, 1.0, 1.0); // Clear to black, fully opaque
+  function drawScene(gl, programInfo, buffers, data, phase, timestamp) {
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
     gl.clearDepth(1.0); // Clear everything
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -360,15 +364,15 @@ function animateWebGL() {
     x.domain(d3.extent(data, d => d.lon));
     y.domain(d3.extent(data, d => d.lat));
 
-    data.forEach(d => {
+    data.forEach((d, i) => {
       const modelViewMatrix = mat4.create();
 
       mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
         [
-          x(d.lon) + 0.1 * Math.sin(0.001 * timestamp),
-          y(d.lat) + 0.1 * Math.cos(0.001 * timestamp),
+          x(d.lon) + 0.1 * Math.sin(0.001 * timestamp + phase[i]),
+          y(d.lat) + 0.1 * Math.cos(0.001 * timestamp + phase[i]),
           -1,
         ]
       );
@@ -417,17 +421,25 @@ function animateWebGL() {
       const fps = `${d3.format('.0f')(1000 / (timestamp - lastTimestamp))} /s`;
 
       d3.select('#webgl-update-time').text(fps);
-      console.log(timestamp);
     }
 
     lastTimestamp = timestamp;
 
     webGLRequest = window.requestAnimationFrame(function(timestamp) {
-      drawScene(gl, programInfo, buffers, data, timestamp);
+      drawScene(gl, programInfo, buffers, data, phase, timestamp);
     });
   }
 }
 
 function stopWebGL() {
   cancelAnimationFrame(webGLRequest);
+}
+
+function clearWebGL() {
+  const canvas = d3.select('#webgl');
+  const gl = canvas.node().getContext('webgl');
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.clearDepth(1.0); // Clear everything
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
